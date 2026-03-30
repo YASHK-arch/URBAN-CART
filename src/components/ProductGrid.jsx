@@ -63,7 +63,7 @@ const ProductGrid = ({ products, loading, error, itemsPerPage = 9, disablePagina
       </div>
 
       {!disablePagination && totalPages > 1 && (
-        <div className="flex items-center justify-center gap-4 mt-8 pt-6 border-t border-gray-100">
+        <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 mt-6 md:mt-8 pt-4 md:pt-6 border-t border-gray-100">
           <button 
             className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-800 font-semibold transition-all hover:bg-gray-50 hover:border-blinkit-green hover:text-blinkit-green disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-200 disabled:hover:text-gray-800" 
             disabled={currentPage === 1}
@@ -72,7 +72,7 @@ const ProductGrid = ({ products, loading, error, itemsPerPage = 9, disablePagina
             <FaChevronLeft className="text-sm" /> Prev
           </button>
           
-          <div className="flex gap-2">
+          <div className="flex gap-1 md:gap-2 overflow-x-auto max-w-[200px] md:max-w-none">
             {[...Array(totalPages)].map((_, i) => (
               <button 
                 key={i + 1}

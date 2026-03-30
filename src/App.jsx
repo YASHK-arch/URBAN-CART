@@ -18,7 +18,7 @@ function App() {
     <div className="app-container">
       {isLoading && <Loader onLoadingComplete={() => setIsLoading(false)} />}
       <Navbar />
-      <main className="main-content">
+      <main className="main-content pb-16 md:pb-0">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />

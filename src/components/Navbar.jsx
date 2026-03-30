@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import logoUrl from '../assets/URBAN-CART LOGO.png';
-import { FaHeart, FaShoppingCart, FaUser, FaSignOutAlt, FaChevronDown } from 'react-icons/fa';
+import { FaHeart, FaShoppingCart, FaUser, FaSignOutAlt, FaChevronDown, FaHome, FaStore } from 'react-icons/fa';
 import { useCart } from '../hooks/useCart';
 import { useWishlist } from '../hooks/useWishlist';
 import { useAuth } from '../context/AuthContext';
@@ -13,6 +13,7 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const location = useLocation();
 
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
@@ -21,30 +22,35 @@ const Navbar = () => {
     setShowUserMenu(false);
   };
 
+  const isActive = (path) => location.pathname === path;
+
   return (
     <>
+      {/* ─── Top Navbar ─── */}
       <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4 flex items-center justify-between">
 
           {/* Brand */}
           <Link to="/" className="text-5xl font-amatic font-bold tracking-widest text-[#FFC107] flex items-center drop-shadow-sm pb-1">
-            <img src={logoUrl} alt="UrbanCart" className="h-10 w-auto mr-2 object-contain" />
-            Urban<span className="text-blinkit-green ml-1">Cart</span>
+            <img src={logoUrl} alt="UrbanCart" className="h-9 md:h-10 w-auto mr-2 object-contain" />
+            <span className="hidden sm:inline">Urban<span className="text-blinkit-green ml-1">Cart</span></span>
           </Link>
 
-          {/* Links */}
+          {/* Desktop nav links */}
           <ul className="hidden md:flex gap-8 items-center list-none">
             <li>
-              <Link to="/" className="font-semibold text-gray-600 hover:text-blinkit-green transition-colors">Home</Link>
+              <Link to="/" className={`font-semibold transition-colors ${isActive('/') ? 'text-blinkit-green' : 'text-gray-600 hover:text-blinkit-green'}`}>Home</Link>
             </li>
             <li>
-              <Link to="/products" className="font-semibold text-gray-600 hover:text-blinkit-green transition-colors">Shop</Link>
+              <Link to="/products" className={`font-semibold transition-colors ${isActive('/products') ? 'text-blinkit-green' : 'text-gray-600 hover:text-blinkit-green'}`}>Shop</Link>
             </li>
           </ul>
 
           {/* Icons & Actions */}
-          <div className="flex gap-6 items-center">
-            <Link to="/wishlist" className="relative text-gray-700 hover:text-blinkit-green transition-transform hover:scale-110 flex items-center text-xl">
+          <div className="flex gap-3 md:gap-6 items-center">
+
+            {/* Wishlist — hidden on mobile (available in bottom nav) */}
+            <Link to="/wishlist" className="relative text-gray-700 hover:text-blinkit-green transition-transform hover:scale-110 flex items-center text-xl hidden md:flex">
               <FaHeart />
               {wishlist.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-[18px] h-[18px] rounded-full flex items-center justify-center">
@@ -59,11 +65,11 @@ const Navbar = () => {
                 <button
                   id="user-menu-btn"
                   onClick={() => setShowUserMenu((v) => !v)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl bg-blinkit-green/10 text-blinkit-green font-bold text-sm hover:bg-blinkit-green/20 transition-all"
+                  className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-2 rounded-xl bg-blinkit-green/10 text-blinkit-green font-bold text-sm hover:bg-blinkit-green/20 transition-all"
                 >
                   <FaUser className="text-xs" />
                   <span className="hidden sm:inline max-w-[100px] truncate">{user.name.split(' ')[0]}</span>
-                  <FaChevronDown className="text-xs" />
+                  <FaChevronDown className="text-xs hidden sm:inline" />
                 </button>
 
                 {showUserMenu && (
@@ -86,7 +92,7 @@ const Navbar = () => {
               <button
                 id="navbar-login-btn"
                 onClick={() => setShowLoginModal(true)}
-                className="font-bold text-gray-700 text-sm hover:text-blinkit-green transition-colors px-3 py-2 rounded-xl hover:bg-gray-50"
+                className="font-bold text-gray-700 text-sm hover:text-blinkit-green transition-colors px-2 md:px-3 py-2 rounded-xl hover:bg-gray-50"
               >
                 Login
               </button>
@@ -94,17 +100,69 @@ const Navbar = () => {
 
             <Link
               to="/cart"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-transform hover:scale-105 ${
+              className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg font-bold transition-transform hover:scale-105 ${
                 cartCount > 0
                   ? 'bg-blinkit-green text-white'
                   : 'bg-gray-100 text-gray-500 hover:bg-gray-200 hover:scale-100'
               }`}
             >
               <FaShoppingCart />
-              <span>{cartCount > 0 ? `${cartCount} items` : 'My Cart'}</span>
+              <span className="hidden sm:inline">{cartCount > 0 ? `${cartCount} items` : 'My Cart'}</span>
+              {/* Mobile: show count badge */}
+              {cartCount > 0 && <span className="sm:hidden text-xs font-black">{cartCount}</span>}
             </Link>
           </div>
+        </div>
+      </nav>
 
+      {/* ─── Mobile Bottom Navigation Bar ─── */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+        <div className="flex items-stretch h-16">
+          <Link
+            to="/"
+            className={`flex-1 flex flex-col items-center justify-center gap-1 transition-colors ${isActive('/') ? 'text-blinkit-green' : 'text-gray-400'}`}
+          >
+            <FaHome size={18} />
+            <span className="text-[10px] font-bold tracking-wide">Home</span>
+          </Link>
+
+          <Link
+            to="/products"
+            className={`flex-1 flex flex-col items-center justify-center gap-1 transition-colors ${isActive('/products') ? 'text-blinkit-green' : 'text-gray-400'}`}
+          >
+            <FaStore size={18} />
+            <span className="text-[10px] font-bold tracking-wide">Shop</span>
+          </Link>
+
+          <Link
+            to="/wishlist"
+            className={`flex-1 flex flex-col items-center justify-center gap-1 relative transition-colors ${isActive('/wishlist') ? 'text-blinkit-green' : 'text-gray-400'}`}
+          >
+            <span className="relative">
+              <FaHeart size={18} />
+              {wishlist.length > 0 && (
+                <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {wishlist.length}
+                </span>
+              )}
+            </span>
+            <span className="text-[10px] font-bold tracking-wide">Wishlist</span>
+          </Link>
+
+          <Link
+            to="/cart"
+            className={`flex-1 flex flex-col items-center justify-center gap-1 relative transition-colors ${isActive('/cart') ? 'text-blinkit-green' : 'text-gray-400'}`}
+          >
+            <span className="relative">
+              <FaShoppingCart size={18} />
+              {cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 bg-blinkit-green text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </span>
+            <span className="text-[10px] font-bold tracking-wide">Cart</span>
+          </Link>
         </div>
       </nav>
 

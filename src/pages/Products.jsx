@@ -5,12 +5,14 @@ import { useDebounce } from '../hooks/useDebounce';
 import ProductGrid from '../components/ProductGrid';
 import Filters from '../components/Filters';
 import SearchBar from '../components/SearchBar';
+import { FaSlidersH } from 'react-icons/fa';
 
 const Products = () => {
   const location = useLocation();
   const { products, categories, loading, error } = useProducts();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const [showFilters, setShowFilters] = useState(false);
   
   const sidebarRef = useRef(null);
   const [itemsPerPage, setItemsPerPage] = useState(9);
@@ -132,7 +134,7 @@ const Products = () => {
   }, [products, debouncedSearchTerm, activeCategory, priceRange, sortBy]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in w-full">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 md:py-8 animate-fade-in w-full">
       <SearchBar 
         searchTerm={searchTerm} 
         setSearchTerm={setSearchTerm} 
@@ -140,13 +142,40 @@ const Products = () => {
         products={products}
         setActiveCategory={setActiveCategory}
       />
-      
-      <div className="flex flex-col lg:flex-row gap-8 items-start w-full">
-        <aside className="w-full lg:w-1/4 lg:sticky lg:top-24 z-10" ref={sidebarRef}>
+
+      {/* Mobile filter toggle button */}
+      <div className="flex items-center justify-between mb-4 lg:hidden">
+        <h2 className="text-lg font-black text-gray-800 capitalize tracking-tight">
+          {activeCategory === 'All Products' ? 'All Products' : activeCategory}
+          <span className="ml-2 text-sm font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+            {loading ? '...' : filteredProducts.length}
+          </span>
+        </h2>
+        <button
+          onClick={() => setShowFilters(f => !f)}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-bold transition-all ${
+            showFilters
+              ? 'bg-blinkit-green text-white border-blinkit-green'
+              : 'bg-white text-gray-700 border-gray-200 hover:border-blinkit-green hover:text-blinkit-green'
+          }`}
+        >
+          <FaSlidersH size={13} />
+          Filters
+        </button>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-4 md:gap-8 items-start w-full">
+        {/* Sidebar — always visible on desktop, collapsible on mobile */}
+        <aside
+          className={`w-full lg:w-1/4 lg:sticky lg:top-24 z-10 lg:block ${
+            showFilters ? 'block' : 'hidden'
+          }`}
+          ref={sidebarRef}
+        >
           <Filters 
             categories={categories}
             activeCategory={activeCategory}
-            setActiveCategory={setActiveCategory}
+            setActiveCategory={(cat) => { setActiveCategory(cat); setShowFilters(false); }}
             priceRange={priceRange}
             setPriceRange={setPriceRange}
             sortBy={sortBy}
@@ -155,7 +184,8 @@ const Products = () => {
         </aside>
         
         <section className="w-full lg:w-3/4 flex flex-col">
-          <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+          {/* Desktop-only heading row */}
+          <div className="hidden lg:flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
             <h2 className="text-2xl font-black text-gray-800 capitalize tracking-tight">
               {activeCategory === 'All Products' ? 'All Products' : activeCategory}
             </h2>
