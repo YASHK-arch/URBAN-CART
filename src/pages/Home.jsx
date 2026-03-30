@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
 import ProductGrid from '../components/ProductGrid';
-import womenImg from '../assets/women.png';
+
 
 const Home = () => {
   const navigate = useNavigate();
@@ -80,7 +80,7 @@ const Home = () => {
 
           <div
             className="rounded-2xl p-6 cursor-pointer hover:-translate-y-2 hover:shadow-[0_60px_100px_-20px_rgba(0,0,0,0.7)] transition-all group relative overflow-hidden h-[180px] flex flex-col justify-center bg-cover bg-center shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)] bg-gray-900 ring-1 ring-gray-900/5"
-            style={{ backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.85), rgba(0,0,0,0.2)), url(${womenImg})` }}
+            style={{ backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.85), rgba(0,0,0,0.2)), url('https://www.thelist.com/img/gallery/what-to-know-about-perfume-concentrations/l-intro-1673527873.jpg')` }}
             onClick={() => handlePromoClick('women-essentials')}
           >
             <div className="relative z-10 w-11/12 lg:w-full">
